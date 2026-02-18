@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FIDZNET STUDIO | Digital Architect</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
@@ -27,7 +27,6 @@
             font-family: 'Space Grotesk', sans-serif; 
             color: var(--text);
             width: 100%;
-            /* Menggunakan dvh agar tidak kepotong bar browser IG */
             height: 100dvh; 
         }
 
@@ -65,7 +64,7 @@
         .main-content { 
             text-align: left; 
             max-width: 900px; 
-            margin-top: -10vh; /* Dikurangi sedikit agar tidak terlalu mepet atas */
+            margin-top: -10vh;
         }
         
         .creative-txt {
@@ -78,7 +77,6 @@
         }
 
         .main-content h1 {
-            /* Ukuran H1 disesuaikan agar "sedeng" (tidak kegedean) */
             font-size: clamp(2.2rem, 9vw, 5.5rem); 
             font-weight: 700;
             line-height: 1.0; letter-spacing: -1px; margin: 10px 0;
@@ -148,26 +146,26 @@
             display: flex; justify-content: space-between; text-transform: uppercase;
         }
 
-        /* Penyesuaian khusus HP agar Pas (Sedeng) */
         @media (max-width: 768px) {
             .top-nav { padding: 20px 25px; }
             .logo { letter-spacing: 3px; font-size: 0.75rem; }
             .social-icons { gap: 15px; }
-            .social-icons a { font-size: 1.1rem; }
-
             .overlay { padding: 20px; }
             .main-content { margin-top: -15vh; }
-            .main-content h1 { font-size: 2.8rem; line-height: 1.1; } /* Ukuran sedeng di HP */
-            .creative-txt { letter-spacing: 8px; font-size: 0.65rem; }
-
+            .main-content h1 { font-size: 2.8rem; }
             .side-menu { right: 15px; gap: 30px; }
-            .menu-item { font-size: 0.75rem; letter-spacing: 4px; }
-
-            .footer-main { bottom: 20px; left: 20px; width: calc(100% - 40px); flex-direction: column; gap: 8px; text-align: center; }
-            
+            /* FIXED FOOTER UNTUK HP */
+            .footer-main { 
+                bottom: 50px; /* Dinaikkan agar tidak tertutup menu HP */
+                left: 0; 
+                width: 100%; 
+                flex-direction: column; 
+                gap: 5px; 
+                text-align: center;
+                padding-bottom: env(safe-area-inset-bottom); /* Support bar iPhone/HP baru */
+            }
             .panel { padding: 80px 25px 40px 25px; }
             .service-grid { grid-template-columns: 1fr; }
-            .back-btn { top: 25px; right: 25px; }
         }
 
         #loader {
@@ -219,7 +217,6 @@
         <div class="menu-item" onclick="openPanel('contact')">Connect</div>
     </div>
 
-    <!-- Panel Socials -->
     <div class="panel panel-smm" id="panel-smm">
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body">
@@ -237,7 +234,6 @@
         </div>
     </div>
 
-    <!-- Panel Academic -->
     <div class="panel panel-academic" id="panel-academic">
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body">
@@ -255,7 +251,6 @@
         </div>
     </div>
 
-    <!-- Panel Connect -->
     <div class="panel panel-contact" id="panel-contact">
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body" style="text-align: center;">
@@ -297,39 +292,41 @@
             mainGroup = new THREE.Group();
             scene.add(mainGroup);
 
+            // PERBAIKAN ANIMASI BACKGROUND: Lebih ramai dan lebih besar partikelnya di HP
+            const isMobile = window.innerWidth < 768;
             const starGeo = new THREE.BufferGeometry();
-            const starCount = 2500;
+            const starCount = isMobile ? 3500 : 2500;
             const posArray = new Float32Array(starCount * 3);
             for(let i=0; i < starCount * 3; i++) {
                 posArray[i] = (Math.random() - 0.5) * 25;
             }
             starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
             const starMat = new THREE.PointsMaterial({ 
-                size: 0.012, 
+                size: isMobile ? 0.035 : 0.012, // Bintang dibuat jauh lebih besar di HP agar jelas
                 color: 0x6366f1, 
                 transparent: true, 
-                opacity: 0.6,
+                opacity: 0.8,
                 blending: THREE.AdditiveBlending 
             });
             stars = new THREE.Points(starGeo, starMat);
             scene.add(stars);
 
             innerMat = new THREE.MeshStandardMaterial({ 
-                color: 0x000, metalness: 1, roughness: 0, emissive: 0x6366f1, emissiveIntensity: 1 
+                color: 0x000, metalness: 1, roughness: 0, emissive: 0x6366f1, emissiveIntensity: 1.5 
             });
             const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.7, 0), innerMat);
             mainGroup.add(crystal);
 
             wire = new THREE.LineSegments(
                 new THREE.EdgesGeometry(new THREE.OctahedronGeometry(1.2, 0)),
-                new THREE.LineBasicMaterial({ color: 0x6366f1, opacity: 0.3, transparent: true })
+                new THREE.LineBasicMaterial({ color: 0x6366f1, opacity: 0.5, transparent: true })
             );
             mainGroup.add(wire);
 
-            const light = new THREE.PointLight(0x6366f1, 150);
+            const light = new THREE.PointLight(0x6366f1, 200);
             light.position.set(5, 5, 5);
             scene.add(light);
-            scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+            scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
             window.addEventListener('mousemove', (e) => {
                 mouseX = (e.clientX / window.innerWidth - 0.5) * 0.3;
@@ -364,8 +361,8 @@
             mainGroup.rotation.y = time * 0.25 + targetX;
             mainGroup.rotation.x = time * 0.1 + targetY;
             wire.rotation.y = -time * 0.4;
-            stars.rotation.y += 0.0008;
-            innerMat.emissiveIntensity = 0.8 + Math.sin(time * 3) * 0.3;
+            stars.rotation.y += 0.0012; // Sedikit lebih cepat agar hidup
+            innerMat.emissiveIntensity = 1.0 + Math.sin(time * 3) * 0.5;
             renderer.render(scene, camera);
         }
 
