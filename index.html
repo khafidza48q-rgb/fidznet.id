@@ -16,7 +16,7 @@
             --accent-glow: rgba(99, 102, 241, 0.4);
             --text: #ffffff;
             --text-dim: #555560;
-            --glass: rgba(5, 5, 10, 0.9);
+            --glass: rgba(5, 5, 10, 0.95);
             --glass-border: rgba(255, 255, 255, 0.05);
         }
 
@@ -26,6 +26,8 @@
             background-color: var(--bg); 
             font-family: 'Space Grotesk', sans-serif; 
             color: var(--text);
+            width: 100%;
+            height: 100%;
         }
 
         body::before {
@@ -62,7 +64,7 @@
         .main-content { text-align: left; max-width: 900px; }
         .creative-txt {
             font-family: 'Syncopate', sans-serif;
-            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(0.8rem, 3vw, 1.5rem);
             letter-spacing: 15px; text-transform: uppercase;
             background: linear-gradient(to right, var(--accent), #fff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -70,8 +72,8 @@
         }
 
         .main-content h1 {
-            font-size: clamp(3.5rem, 12vw, 7.5rem); font-weight: 700;
-            line-height: 0.8; letter-spacing: -5px; margin: 10px 0;
+            font-size: clamp(2.5rem, 12vw, 7.5rem); font-weight: 700;
+            line-height: 0.9; letter-spacing: -2px; margin: 10px 0;
             background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.1) 150%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -89,40 +91,26 @@
         }
         .menu-item:hover { color: var(--accent); letter-spacing: 10px; }
 
+        /* Panel Styling */
         .panel {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             background: var(--glass); backdrop-filter: blur(25px);
             z-index: 200; display: flex; flex-direction: column;
             justify-content: center; align-items: center; padding: 100px;
             box-sizing: border-box; visibility: hidden; pointer-events: none;
+            overflow-y: auto; /* Memungkinkan scroll jika konten panjang di HP */
         }
 
-        /* Unique Panel Transitions */
         .panel-smm { transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1); }
         .panel-academic { transform: translateX(100%); transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1); }
         .panel-contact { transform: scale(1.2); opacity: 0; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
         .panel.active { visibility: visible; pointer-events: auto; transform: none; opacity: 1; }
 
-        /* UNIQUE CONTENT ANIMATIONS */
-        /* SMM: Staggered Fade Up */
-        .panel-smm .service-card { opacity: 0; transform: translateY(40px); transition: 0.6s; }
-        .panel.active.panel-smm .service-card { opacity: 1; transform: translateY(0); }
-        .panel.active.panel-smm .service-card:nth-child(1) { transition-delay: 0.4s; }
-        .panel.active.panel-smm .service-card:nth-child(2) { transition-delay: 0.6s; }
-
-        /* Academic: Slide & Blur */
-        .panel-academic .panel-body { opacity: 0; filter: blur(10px); transform: translateX(50px); transition: 0.8s 0.3s; }
-        .panel.active.panel-academic .panel-body { opacity: 1; filter: blur(0); transform: translateX(0); }
-
-        /* Contact: Pop Scale */
-        .panel-contact .wa-btn { transform: scale(0); transition: 0.5s 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .panel.active.panel-contact .wa-btn { transform: scale(1); }
-
         .panel-body { width: 100%; max-width: 1000px; }
-        .panel-body h2 { font-family: 'Syncopate'; font-size: 3rem; margin-bottom: 40px; letter-spacing: 10px; }
+        .panel-body h2 { font-family: 'Syncopate'; font-size: clamp(1.5rem, 5vw, 3rem); margin-bottom: 40px; letter-spacing: 10px; }
 
-        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .service-card {
             padding: 30px; border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.02); border-radius: 5px;
@@ -135,12 +123,7 @@
             position: absolute; top: 40px; right: 60px;
             cursor: pointer; font-size: 0.8rem; letter-spacing: 5px;
             display: flex; align-items: center; gap: 15px; color: var(--accent);
-        }
-
-        .panel-footer {
-            position: absolute; bottom: 40px; left: 60px;
-            font-size: 0.6rem; letter-spacing: 3px; color: var(--text-dim);
-            text-transform: uppercase;
+            z-index: 210;
         }
 
         .footer-main {
@@ -148,6 +131,25 @@
             display: flex; justify-content: space-between; text-transform: uppercase;
         }
 
+        /* RESPONSIVE FIXES (UNTUK HP) */
+        @media (max-width: 768px) {
+            .top-nav { padding: 20px; }
+            .logo { letter-spacing: 2px; font-size: 0.7rem; }
+            .social-icons { gap: 15px; }
+            
+            .overlay { padding: 30px 20px; }
+            .side-menu { right: 20px; gap: 40px; }
+            
+            .footer-main { flex-direction: column; gap: 10px; text-align: center; align-items: center; }
+            
+            .panel { padding: 80px 20px 40px 20px; justify-content: flex-start; }
+            .service-grid { grid-template-columns: 1fr; } /* Kartu jadi tumpuk ke bawah di HP */
+            .back-btn { top: 20px; right: 20px; }
+            
+            .panel-body h2 { letter-spacing: 5px; margin-bottom: 20px; text-align: center; }
+        }
+
+        /* Loader */
         #loader {
             position: fixed; inset: 0; background: #000; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -158,13 +160,11 @@
         .wa-btn {
             display: inline-block;
             color: var(--accent); text-decoration: none; 
-            border: 1px solid var(--accent); padding: 20px 50px; 
+            border: 1px solid var(--accent); padding: 15px 30px; 
             border-radius: 5px; font-weight: 700; letter-spacing: 3px;
             transition: 0.4s; pointer-events: auto;
         }
-        .wa-btn:hover {
-            background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent-glow);
-        }
+        .wa-btn:hover { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
@@ -175,10 +175,11 @@
     </div>
 
     <header class="top-nav">
-        <div class="logo">FIDZNET STUDIO</div>
+        <div class="logo" onclick="location.reload()">FIDZNET STUDIO</div>
         <div class="social-icons">
-            <a href="#"><i class="fab fa-github"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+            <!-- Link GitHub & IG yang sudah diperbaiki -->
+            <a href="https://github.com/khafidza48q-rgb" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.instagram.com/ha_fidzz_004?igsh=bGo2NGp4NzZobjlp" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="https://wa.me/6283168213786" target="_blank">
                 <i class="fab fa-whatsapp"></i>
             </a>
@@ -192,7 +193,7 @@
             <h1>DIGITAL<br>ANYTHING</h1>
         </div>
         <div class="footer-main">
-            <span>&copy; 2026 FIDZNET A1.22 STUDIO. ALL RIGHTS RESERVED</span>
+            <span>&copy; 2026 FIDZNET STUDIO. ALL RIGHTS RESERVED</span>
             <span>MN_86 // PUSHHH</span>
         </div>
     </div>
@@ -203,6 +204,7 @@
         <div class="menu-item" onclick="openPanel('contact')">Connect</div>
     </div>
 
+    <!-- Panel Socials -->
     <div class="panel panel-smm" id="panel-smm">
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body">
@@ -218,9 +220,9 @@
                 </div>
             </div>
         </div>
-        <div class="panel-footer">&copy; 2024 FIDZNET STUDIO // SOCIAL MEDIA SERVICE</div>
     </div>
 
+    <!-- Panel Academic -->
     <div class="panel panel-academic" id="panel-academic">
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body">
@@ -236,9 +238,9 @@
                 </div>
             </div>
         </div>
-        <div class="panel-footer">&copy; 2024 FIDZNET STUDIO // ACADEMIC WRITING SERVICE</div>
     </div>
 
+    <!-- Panel Connect -->
     <div class="panel panel-contact" id="panel-contact">
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body" style="text-align: center;">
@@ -249,7 +251,6 @@
                 WHATSAPP CONTACT
             </a>
         </div>
-        <div class="panel-footer">&copy; 2024 FIDZNET STUDIO // COMMUNICATION LINE</div>
     </div>
 
     <div id="canvas-container"></div>
@@ -281,7 +282,6 @@
             mainGroup = new THREE.Group();
             scene.add(mainGroup);
 
-            // 1. STAR BACKGROUND
             const starGeo = new THREE.BufferGeometry();
             const starCount = 2000;
             const posArray = new Float32Array(starCount * 3);
@@ -293,21 +293,18 @@
             stars = new THREE.Points(starGeo, starMat);
             scene.add(stars);
 
-            // 2. CRYSTAL CORE (Octahedron)
             innerMat = new THREE.MeshStandardMaterial({ 
                 color: 0x000, metalness: 1, roughness: 0, emissive: 0x6366f1, emissiveIntensity: 0.8 
             });
             const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(1.5, 0), innerMat);
             mainGroup.add(crystal);
 
-            // 3. CRYSTAL WIREFRAME (Opposing rotation)
             wire = new THREE.LineSegments(
                 new THREE.EdgesGeometry(new THREE.OctahedronGeometry(2.2, 0)),
                 new THREE.LineBasicMaterial({ color: 0x6366f1, opacity: 0.3, transparent: true })
             );
             mainGroup.add(wire);
 
-            // LIGHTS
             const light = new THREE.PointLight(0x6366f1, 100);
             light.position.set(5, 5, 5);
             scene.add(light);
@@ -316,6 +313,19 @@
             window.addEventListener('mousemove', (e) => {
                 mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
                 mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
+            });
+            
+            // Touch support untuk HP
+            window.addEventListener('touchmove', (e) => {
+                mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 0.5;
+                mouseY = (e.touches[0].clientY / window.innerHeight - 0.5) * 0.5;
+            });
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
             setTimeout(() => {
@@ -330,39 +340,32 @@
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
-            
             targetX += (mouseX - targetX) * 0.05;
             targetY += (mouseY - targetY) * 0.05;
-
-            // ANIMASI CRYSTAL
             mainGroup.rotation.y = time * 0.2 + targetX;
             mainGroup.rotation.x = time * 0.1 + targetY;
-            
-            // Wireframe berputar berlawanan arah
             wire.rotation.y = -time * 0.4;
             wire.rotation.z = time * 0.2;
-
-            // Floating effect
             mainGroup.position.y = Math.sin(time) * 0.2;
-
             innerMat.emissiveIntensity = 0.6 + Math.sin(time * 3) * 0.4;
             stars.rotation.y += 0.0005;
-
             renderer.render(scene, camera);
         }
 
         window.openPanel = function(id) {
             document.getElementById('panel-' + id).classList.add('active');
             document.getElementById('main-overlay').style.opacity = '0';
-            document.getElementById('main-overlay').style.transform = 'translateY(-20px)';
+            document.getElementById('main-overlay').style.pointerEvents = 'none';
             document.getElementById('side-menu').style.opacity = '0';
+            document.getElementById('side-menu').style.pointerEvents = 'none';
         }
 
         window.closePanels = function() {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.getElementById('main-overlay').style.opacity = '1';
-            document.getElementById('main-overlay').style.transform = 'translateY(0)';
+            document.getElementById('main-overlay').style.pointerEvents = 'auto';
             document.getElementById('side-menu').style.opacity = '1';
+            document.getElementById('side-menu').style.pointerEvents = 'auto';
         }
     </script>
 </body>
