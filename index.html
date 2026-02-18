@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIDZNET STUDIO | Digital Architect</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #030305;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --text: #ffffff;
+            --text-dim: #555560;
+            --glass: rgba(5, 5, 10, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: var(--bg); 
+            font-family: 'Space Grotesk', sans-serif; 
+            color: var(--text);
+        }
+
+        body::before {
+            content: "";
+            position: fixed; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%;
+            z-index: 5; pointer-events: none;
+        }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 30px 60px; z-index: 100; box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .logo { font-weight: 700; letter-spacing: 6px; font-size: 0.9rem; pointer-events: auto; cursor: pointer; }
+        .social-icons { display: flex; gap: 25px; pointer-events: auto; }
+        .social-icons a { color: var(--text); font-size: 1.2rem; transition: 0.3s; opacity: 0.6; text-decoration: none; }
+        .social-icons a:hover { color: var(--accent); opacity: 1; transform: translateY(-3px); }
+
+        #canvas-container { 
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;
+        }
+
+        .overlay {
+            position: relative; z-index: 10; pointer-events: none; height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 60px; box-sizing: border-box; transition: 1s ease;
+        }
+
+        .main-content { text-align: left; max-width: 900px; }
+        .creative-txt {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            letter-spacing: 15px; text-transform: uppercase;
+            background: linear-gradient(to right, var(--accent), #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .main-content h1 {
+            font-size: clamp(3.5rem, 12vw, 7.5rem); font-weight: 700;
+            line-height: 0.8; letter-spacing: -5px; margin: 10px 0;
+            background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.1) 150%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .side-menu {
+            position: fixed; right: 60px; top: 50%;
+            transform: translateY(-50%); display: flex; flex-direction: column;
+            gap: 60px; z-index: 100; pointer-events: auto; transition: 0.5s;
+        }
+
+        .menu-item {
+            writing-mode: vertical-rl; text-transform: uppercase;
+            font-size: 0.7rem; letter-spacing: 5px; color: var(--text-dim);
+            cursor: pointer; transition: 0.5s;
+        }
+        .menu-item:hover { color: var(--accent); letter-spacing: 10px; }
+
+        .panel {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            background: var(--glass); backdrop-filter: blur(25px);
+            z-index: 200; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 100px;
+            box-sizing: border-box; visibility: hidden; pointer-events: none;
+        }
+
+        /* Unique Panel Transitions */
+        .panel-smm { transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1); }
+        .panel-academic { transform: translateX(100%); transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1); }
+        .panel-contact { transform: scale(1.2); opacity: 0; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        .panel.active { visibility: visible; pointer-events: auto; transform: none; opacity: 1; }
+
+        /* UNIQUE CONTENT ANIMATIONS */
+        /* SMM: Staggered Fade Up */
+        .panel-smm .service-card { opacity: 0; transform: translateY(40px); transition: 0.6s; }
+        .panel.active.panel-smm .service-card { opacity: 1; transform: translateY(0); }
+        .panel.active.panel-smm .service-card:nth-child(1) { transition-delay: 0.4s; }
+        .panel.active.panel-smm .service-card:nth-child(2) { transition-delay: 0.6s; }
+
+        /* Academic: Slide & Blur */
+        .panel-academic .panel-body { opacity: 0; filter: blur(10px); transform: translateX(50px); transition: 0.8s 0.3s; }
+        .panel.active.panel-academic .panel-body { opacity: 1; filter: blur(0); transform: translateX(0); }
+
+        /* Contact: Pop Scale */
+        .panel-contact .wa-btn { transform: scale(0); transition: 0.5s 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .panel.active.panel-contact .wa-btn { transform: scale(1); }
+
+        .panel-body { width: 100%; max-width: 1000px; }
+        .panel-body h2 { font-family: 'Syncopate'; font-size: 3rem; margin-bottom: 40px; letter-spacing: 10px; }
+
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .service-card {
+            padding: 30px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.02); border-radius: 5px;
+            transition: 0.3s;
+        }
+        .service-card:hover { border-color: var(--accent); background: rgba(99, 102, 241, 0.05); transform: translateY(-5px); }
+        .service-card h3 { color: var(--accent); letter-spacing: 3px; margin-bottom: 15px; }
+
+        .back-btn {
+            position: absolute; top: 40px; right: 60px;
+            cursor: pointer; font-size: 0.8rem; letter-spacing: 5px;
+            display: flex; align-items: center; gap: 15px; color: var(--accent);
+        }
+
+        .panel-footer {
+            position: absolute; bottom: 40px; left: 60px;
+            font-size: 0.6rem; letter-spacing: 3px; color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .footer-main {
+            font-size: 0.6rem; letter-spacing: 3px; color: var(--text-dim);
+            display: flex; justify-content: space-between; text-transform: uppercase;
+        }
+
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .progress-bar { width: 150px; height: 1px; background: #1a1a1a; margin-top: 20px; }
+        .progress-inner { width: 0%; height: 100%; background: var(--accent); transition: 1s; }
+
+        .wa-btn {
+            display: inline-block;
+            color: var(--accent); text-decoration: none; 
+            border: 1px solid var(--accent); padding: 20px 50px; 
+            border-radius: 5px; font-weight: 700; letter-spacing: 3px;
+            transition: 0.4s; pointer-events: auto;
+        }
+        .wa-btn:hover {
+            background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div style="letter-spacing: 10px; font-size: 0.7rem;">LOADING EXPERIENCE</div>
+        <div class="progress-bar"><div class="progress-inner" id="bar"></div></div>
+    </div>
+
+    <header class="top-nav">
+        <div class="logo">FIDZNET STUDIO</div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/6283168213786" target="_blank">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="overlay" id="main-overlay">
+        <div></div>
+        <div class="main-content">
+            <span class="creative-txt">Creative</span>
+            <h1>DIGITAL<br>ANYTHING</h1>
+        </div>
+        <div class="footer-main">
+            <span>&copy; 2026 FIDZNET A1.22 STUDIO. ALL RIGHTS RESERVED</span>
+            <span>MN_86 // PUSHHH</span>
+        </div>
+    </div>
+
+    <div class="side-menu" id="side-menu">
+        <div class="menu-item" onclick="openPanel('smm')">Socials</div>
+        <div class="menu-item" onclick="openPanel('academic')">Academic</div>
+        <div class="menu-item" onclick="openPanel('contact')">Connect</div>
+    </div>
+
+    <div class="panel panel-smm" id="panel-smm">
+        <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
+        <div class="panel-body">
+            <h2>SOCIALS</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h3>INSTAGRAM</h3>
+                    <p>Followers, Likes, and Engagement optimization with organic-like patterns.</p>
+                </div>
+                <div class="service-card">
+                    <h3>TIKTOK / YT</h3>
+                    <p>Monetization support: 4000 hours watchtime and subscriber boosting.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">&copy; 2024 FIDZNET STUDIO // SOCIAL MEDIA SERVICE</div>
+    </div>
+
+    <div class="panel panel-academic" id="panel-academic">
+        <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
+        <div class="panel-body">
+            <h2>ACADEMIC</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h3>MAKALAH</h3>
+                    <p>Professional academic papers with deep research and zero plagiarism.</p>
+                </div>
+                <div class="service-card">
+                    <h3>SKRIPSI</h3>
+                    <p>End-to-end guidance from title proposal to final defense preparation.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">&copy; 2024 FIDZNET STUDIO // ACADEMIC WRITING SERVICE</div>
+    </div>
+
+    <div class="panel panel-contact" id="panel-contact">
+        <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
+        <div class="panel-body" style="text-align: center;">
+            <h2>CONNECT</h2>
+            <p style="letter-spacing: 5px; margin-bottom: 50px;">SIAP MEMULAI PROJECT KAMU?</p>
+            <a href="https://wa.me/6283168213786?text=Halo%20Fidznet,%20saya%20ingin%20tanya%20tentang%20jasanya" 
+               target="_blank" class="wa-btn">
+                WHATSAPP CONTACT
+            </a>
+        </div>
+        <div class="panel-footer">&copy; 2024 FIDZNET STUDIO // COMMUNICATION LINE</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        let scene, camera, renderer, mainGroup, innerMat, stars, wire;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 8;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            mainGroup = new THREE.Group();
+            scene.add(mainGroup);
+
+            // 1. STAR BACKGROUND
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 2000;
+            const posArray = new Float32Array(starCount * 3);
+            for(let i=0; i < starCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 20;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const starMat = new THREE.PointsMaterial({ size: 0.005, color: 0xffffff, transparent: true, opacity: 0.5 });
+            stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
+
+            // 2. CRYSTAL CORE (Octahedron)
+            innerMat = new THREE.MeshStandardMaterial({ 
+                color: 0x000, metalness: 1, roughness: 0, emissive: 0x6366f1, emissiveIntensity: 0.8 
+            });
+            const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(1.5, 0), innerMat);
+            mainGroup.add(crystal);
+
+            // 3. CRYSTAL WIREFRAME (Opposing rotation)
+            wire = new THREE.LineSegments(
+                new THREE.EdgesGeometry(new THREE.OctahedronGeometry(2.2, 0)),
+                new THREE.LineBasicMaterial({ color: 0x6366f1, opacity: 0.3, transparent: true })
+            );
+            mainGroup.add(wire);
+
+            // LIGHTS
+            const light = new THREE.PointLight(0x6366f1, 100);
+            light.position.set(5, 5, 5);
+            scene.add(light);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
+            });
+
+            setTimeout(() => {
+                document.getElementById('bar').style.width = '100%';
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loader').style.display = 'none', 1000);
+                }, 1000);
+            }, 500);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = Date.now() * 0.001;
+            
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
+
+            // ANIMASI CRYSTAL
+            mainGroup.rotation.y = time * 0.2 + targetX;
+            mainGroup.rotation.x = time * 0.1 + targetY;
+            
+            // Wireframe berputar berlawanan arah
+            wire.rotation.y = -time * 0.4;
+            wire.rotation.z = time * 0.2;
+
+            // Floating effect
+            mainGroup.position.y = Math.sin(time) * 0.2;
+
+            innerMat.emissiveIntensity = 0.6 + Math.sin(time * 3) * 0.4;
+            stars.rotation.y += 0.0005;
+
+            renderer.render(scene, camera);
+        }
+
+        window.openPanel = function(id) {
+            document.getElementById('panel-' + id).classList.add('active');
+            document.getElementById('main-overlay').style.opacity = '0';
+            document.getElementById('main-overlay').style.transform = 'translateY(-20px)';
+            document.getElementById('side-menu').style.opacity = '0';
+        }
+
+        window.closePanels = function() {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('main-overlay').style.opacity = '1';
+            document.getElementById('main-overlay').style.transform = 'translateY(0)';
+            document.getElementById('side-menu').style.opacity = '1';
+        }
+    </script>
+</body>
+</html>
