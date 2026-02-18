@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FIDZNET STUDIO | Digital Architect</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
@@ -27,7 +27,8 @@
             font-family: 'Space Grotesk', sans-serif; 
             color: var(--text);
             width: 100%;
-            height: 100%;
+            /* Menggunakan dvh agar tidak kepotong bar browser IG */
+            height: 100dvh; 
         }
 
         body::before {
@@ -52,33 +53,35 @@
         .social-icons a:hover { color: var(--accent); opacity: 1; transform: translateY(-3px); }
 
         #canvas-container { 
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100dvh; z-index: 1;
         }
 
         .overlay {
-            position: relative; z-index: 10; pointer-events: none; height: 100vh;
-            display: flex; flex-direction: column; justify-content: center; /* Diubah ke center agar kontrol margin lebih mudah */
+            position: relative; z-index: 10; pointer-events: none; height: 100dvh;
+            display: flex; flex-direction: column; justify-content: center;
             padding: 60px; box-sizing: border-box; transition: 1s ease;
         }
 
         .main-content { 
             text-align: left; 
             max-width: 900px; 
-            margin-top: -15vh; /* Menarik teks lebih ke atas */
+            margin-top: -10vh; /* Dikurangi sedikit agar tidak terlalu mepet atas */
         }
         
         .creative-txt {
             font-family: 'Syncopate', sans-serif;
-            font-size: clamp(0.8rem, 3vw, 1.2rem);
-            letter-spacing: 12px; text-transform: uppercase;
+            font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+            letter-spacing: 10px; text-transform: uppercase;
             background: linear-gradient(to right, var(--accent), #fff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-weight: 700;
         }
 
         .main-content h1 {
-            font-size: clamp(2.5rem, 12vw, 6.5rem); font-weight: 700;
-            line-height: 0.9; letter-spacing: -2px; margin: 10px 0;
+            /* Ukuran H1 disesuaikan agar "sedeng" (tidak kegedean) */
+            font-size: clamp(2.2rem, 9vw, 5.5rem); 
+            font-weight: 700;
+            line-height: 1.0; letter-spacing: -1px; margin: 10px 0;
             background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.1) 150%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -91,22 +94,20 @@
 
         .menu-item {
             writing-mode: vertical-rl; text-transform: uppercase;
-            font-size: 0.9rem; /* Ukuran menu diperbesar sedikit */
+            font-size: 0.85rem;
             letter-spacing: 6px; color: var(--text-dim);
             cursor: pointer; transition: 0.5s; font-weight: 500;
         }
         .menu-item:hover { color: var(--accent); letter-spacing: 12px; }
 
-        /* Panel Styling dengan Background Berbeda */
         .panel {
-            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            position: fixed; inset: 0; width: 100vw; height: 100dvh;
             z-index: 200; display: flex; flex-direction: column;
             justify-content: center; align-items: center; padding: 100px;
             box-sizing: border-box; visibility: hidden; pointer-events: none;
             overflow-y: auto; backdrop-filter: blur(30px);
         }
 
-        /* Background berbeda tiap panel */
         .panel-smm { 
             background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), var(--bg)); 
             transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1); 
@@ -123,63 +124,72 @@
         .panel.active { visibility: visible; pointer-events: auto; transform: none; opacity: 1; }
 
         .panel-body { width: 100%; max-width: 1000px; }
-        .panel-body h2 { font-family: 'Syncopate'; font-size: clamp(1.5rem, 5vw, 3rem); margin-bottom: 40px; letter-spacing: 10px; }
+        .panel-body h2 { font-family: 'Syncopate'; font-size: clamp(1.4rem, 5vw, 2.5rem); margin-bottom: 30px; letter-spacing: 8px; }
 
         .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .service-card {
-            padding: 30px; border: 1px solid var(--glass-border);
+            padding: 25px; border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.03); border-radius: 5px;
             transition: 0.3s;
         }
-        .service-card:hover { border-color: var(--accent); background: rgba(99, 102, 241, 0.05); transform: translateY(-5px); }
-        .service-card h3 { color: var(--accent); letter-spacing: 3px; margin-bottom: 15px; }
+        .service-card h3 { color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; font-size: 1rem; }
+        .service-card p { font-size: 0.85rem; opacity: 0.8; }
 
         .back-btn {
-            position: absolute; top: 40px; right: 60px;
-            cursor: pointer; font-size: 0.8rem; letter-spacing: 5px;
-            display: flex; align-items: center; gap: 15px; color: var(--accent);
+            position: absolute; top: 30px; right: 30px;
+            cursor: pointer; font-size: 0.7rem; letter-spacing: 4px;
+            display: flex; align-items: center; gap: 10px; color: var(--accent);
             z-index: 210;
         }
 
         .footer-main {
-            position: absolute; bottom: 40px; left: 60px; width: calc(100% - 120px);
-            font-size: 0.6rem; letter-spacing: 3px; color: var(--text-dim);
+            position: absolute; bottom: 30px; left: 40px; width: calc(100% - 80px);
+            font-size: 0.55rem; letter-spacing: 2px; color: var(--text-dim);
             display: flex; justify-content: space-between; text-transform: uppercase;
         }
 
+        /* Penyesuaian khusus HP agar Pas (Sedeng) */
         @media (max-width: 768px) {
-            .top-nav { padding: 20px; }
-            .overlay { padding: 30px 20px; }
-            .main-content { margin-top: -20vh; } /* Lebih ke atas lagi di HP */
-            .side-menu { right: 15px; gap: 35px; }
-            .menu-item { font-size: 0.8rem; }
-            .footer-main { bottom: 20px; left: 20px; width: calc(100% - 40px); flex-direction: column; gap: 10px; text-align: center; }
-            .panel { padding: 80px 20px 40px 20px; justify-content: flex-start; }
+            .top-nav { padding: 20px 25px; }
+            .logo { letter-spacing: 3px; font-size: 0.75rem; }
+            .social-icons { gap: 15px; }
+            .social-icons a { font-size: 1.1rem; }
+
+            .overlay { padding: 20px; }
+            .main-content { margin-top: -15vh; }
+            .main-content h1 { font-size: 2.8rem; line-height: 1.1; } /* Ukuran sedeng di HP */
+            .creative-txt { letter-spacing: 8px; font-size: 0.65rem; }
+
+            .side-menu { right: 15px; gap: 30px; }
+            .menu-item { font-size: 0.75rem; letter-spacing: 4px; }
+
+            .footer-main { bottom: 20px; left: 20px; width: calc(100% - 40px); flex-direction: column; gap: 8px; text-align: center; }
+            
+            .panel { padding: 80px 25px 40px 25px; }
             .service-grid { grid-template-columns: 1fr; }
-            .back-btn { top: 20px; right: 20px; }
+            .back-btn { top: 25px; right: 25px; }
         }
 
         #loader {
             position: fixed; inset: 0; background: #000; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .progress-bar { width: 150px; height: 1px; background: #1a1a1a; margin-top: 20px; }
+        .progress-bar { width: 120px; height: 1px; background: #1a1a1a; margin-top: 20px; }
         .progress-inner { width: 0%; height: 100%; background: var(--accent); transition: 1s; }
 
         .wa-btn {
             display: inline-block;
             color: var(--accent); text-decoration: none; 
-            border: 1px solid var(--accent); padding: 15px 30px; 
-            border-radius: 5px; font-weight: 700; letter-spacing: 3px;
-            transition: 0.4s; pointer-events: auto;
+            border: 1px solid var(--accent); padding: 12px 25px; 
+            border-radius: 5px; font-weight: 700; letter-spacing: 2px;
+            font-size: 0.8rem; transition: 0.4s; pointer-events: auto;
         }
-        .wa-btn:hover { background: var(--accent); color: white; box-shadow: 0 0 30px var(--accent-glow); }
     </style>
 </head>
 <body>
 
     <div id="loader">
-        <div style="letter-spacing: 10px; font-size: 0.7rem;">FIDZNET LOADING</div>
+        <div style="letter-spacing: 8px; font-size: 0.6rem; opacity: 0.8;">FIDZNET STUDIO</div>
         <div class="progress-bar"><div class="progress-inner" id="bar"></div></div>
     </div>
 
@@ -188,9 +198,7 @@
         <div class="social-icons">
             <a href="https://github.com/khafidza48q-rgb" target="_blank"><i class="fab fa-github"></i></a>
             <a href="https://www.instagram.com/ha_fidzz_004?igsh=bGo2NGp4NzZobjlp" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://wa.me/6283168213786" target="_blank">
-                <i class="fab fa-whatsapp"></i>
-            </a>
+            <a href="https://wa.me/6283168213786" target="_blank"><i class="fab fa-whatsapp"></i></a>
         </div>
     </header>
 
@@ -219,11 +227,11 @@
             <div class="service-grid">
                 <div class="service-card">
                     <h3>INSTAGRAM</h3>
-                    <p>Followers, Likes, and Engagement optimization with organic-like patterns.</p>
+                    <p>Followers, Likes, and Engagement optimization.</p>
                 </div>
                 <div class="service-card">
                     <h3>TIKTOK / YT</h3>
-                    <p>Monetization support: 4000 hours watchtime and subscriber boosting.</p>
+                    <p>Monetization support and subscriber boosting.</p>
                 </div>
             </div>
         </div>
@@ -237,11 +245,11 @@
             <div class="service-grid">
                 <div class="service-card">
                     <h3>MAKALAH</h3>
-                    <p>Professional academic papers with deep research and zero plagiarism.</p>
+                    <p>Professional academic papers with zero plagiarism.</p>
                 </div>
                 <div class="service-card">
                     <h3>SKRIPSI</h3>
-                    <p>End-to-end guidance from title proposal to final defense preparation.</p>
+                    <p>End-to-end guidance from proposal to final defense.</p>
                 </div>
             </div>
         </div>
@@ -252,7 +260,7 @@
         <div class="back-btn" onclick="closePanels()">BACK <i class="fas fa-arrow-right"></i></div>
         <div class="panel-body" style="text-align: center;">
             <h2>CONNECT</h2>
-            <p style="letter-spacing: 5px; margin-bottom: 50px;">SIAP MEMULAI PROJECT KAMU?</p>
+            <p style="letter-spacing: 3px; margin-bottom: 40px; font-size: 0.8rem;">SIAP MEMULAI PROJECT KAMU?</p>
             <a href="https://wa.me/6283168213786?text=Halo%20Fidznet,%20saya%20ingin%20tanya%20tentang%20jasanya" 
                target="_blank" class="wa-btn">
                 WHATSAPP CONTACT
@@ -289,35 +297,32 @@
             mainGroup = new THREE.Group();
             scene.add(mainGroup);
 
-            // 1. BG ESTETIK (FLOWING STARS)
             const starGeo = new THREE.BufferGeometry();
-            const starCount = 3000;
+            const starCount = 2500;
             const posArray = new Float32Array(starCount * 3);
             for(let i=0; i < starCount * 3; i++) {
                 posArray[i] = (Math.random() - 0.5) * 25;
             }
             starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
             const starMat = new THREE.PointsMaterial({ 
-                size: 0.015, 
+                size: 0.012, 
                 color: 0x6366f1, 
                 transparent: true, 
-                opacity: 0.8,
+                opacity: 0.6,
                 blending: THREE.AdditiveBlending 
             });
             stars = new THREE.Points(starGeo, starMat);
             scene.add(stars);
 
-            // 2. CRYSTAL CORE (DIKECILIN - dari 1.5 ke 0.8)
             innerMat = new THREE.MeshStandardMaterial({ 
                 color: 0x000, metalness: 1, roughness: 0, emissive: 0x6366f1, emissiveIntensity: 1 
             });
-            const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.8, 0), innerMat);
+            const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.7, 0), innerMat);
             mainGroup.add(crystal);
 
-            // 3. WIREFRAME (DIKECILIN - dari 2.2 ke 1.3)
             wire = new THREE.LineSegments(
-                new THREE.EdgesGeometry(new THREE.OctahedronGeometry(1.3, 0)),
-                new THREE.LineBasicMaterial({ color: 0x6366f1, opacity: 0.4, transparent: true })
+                new THREE.EdgesGeometry(new THREE.OctahedronGeometry(1.2, 0)),
+                new THREE.LineBasicMaterial({ color: 0x6366f1, opacity: 0.3, transparent: true })
             );
             mainGroup.add(wire);
 
@@ -327,9 +332,14 @@
             scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
             window.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX / window.innerWidth - 0.5) * 0.4;
-                mouseY = (e.clientY / window.innerHeight - 0.5) * 0.4;
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 0.3;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
             });
+            
+            window.addEventListener('touchmove', (e) => {
+                mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 0.3;
+                mouseY = (e.touches[0].clientY / window.innerHeight - 0.5) * 0.3;
+            }, {passive: true});
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -349,20 +359,13 @@
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
-            
             targetX += (mouseX - targetX) * 0.05;
             targetY += (mouseY - targetY) * 0.05;
-
-            mainGroup.rotation.y = time * 0.3 + targetX;
-            mainGroup.rotation.x = time * 0.15 + targetY;
-            
-            wire.rotation.y = -time * 0.5;
-            
-            // Gerakan partikel background agar mengalir
-            stars.rotation.y += 0.001;
-            stars.position.z = Math.sin(time * 0.5) * 0.5;
-
-            innerMat.emissiveIntensity = 0.8 + Math.sin(time * 4) * 0.4;
+            mainGroup.rotation.y = time * 0.25 + targetX;
+            mainGroup.rotation.x = time * 0.1 + targetY;
+            wire.rotation.y = -time * 0.4;
+            stars.rotation.y += 0.0008;
+            innerMat.emissiveIntensity = 0.8 + Math.sin(time * 3) * 0.3;
             renderer.render(scene, camera);
         }
 
@@ -370,14 +373,12 @@
             document.getElementById('panel-' + id).classList.add('active');
             document.getElementById('main-overlay').style.opacity = '0';
             document.getElementById('side-menu').style.opacity = '0';
-            document.getElementById('side-menu').style.pointerEvents = 'none';
         }
 
         window.closePanels = function() {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.getElementById('main-overlay').style.opacity = '1';
             document.getElementById('side-menu').style.opacity = '1';
-            document.getElementById('side-menu').style.pointerEvents = 'auto';
         }
     </script>
 </body>
